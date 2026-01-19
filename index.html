@@ -10,7 +10,36 @@
 <h1>Registro de Entrega</h1>
 
 <p id="condominio"></p>
+<form id="entregaForm">
 
+  <p id="infoCondominio"></p>
+
+  <input type="hidden" id="condominioId" name="condominioId">
+
+  <label>
+    Apartamento / Casa
+    <input type="text" id="apartamento" required>
+  </label>
+
+  <label>
+    Tipo de entrega
+    <select id="tipo" required>
+      <option value="">Selecione</option>
+      <option>Correios</option>
+      <option>Mercado</option>
+      <option>Transportadora</option>
+      <option>Outros</option>
+    </select>
+  </label>
+
+  <label>
+    Observações
+    <textarea id="obs"></textarea>
+  </label>
+
+  <button type="submit">Confirmar entrega</button>
+
+</form>
 <script>
   const params = new URLSearchParams(window.location.search);
   const condominioId = params.get("condominio");
