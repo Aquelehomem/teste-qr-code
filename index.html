@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrega - Condomínio</title>
+</head>
+<body>
+
+<h1>Registro de Entrega</h1>
+
+<p id="condominio"></p>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const condominioId = params.get("condominio");
+
+  if (condominioId) {
+    document.getElementById("condominio").innerText =
+      "Condomínio identificado: " + condominioId;
+  } else {
+    document.getElementById("condominio").innerText =
+      "Condomínio não identificado";
+  }
+</script>
+
+</body>
+</html>
