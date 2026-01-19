@@ -41,16 +41,32 @@
 
 </form>
 <script>
+  <script>
   const params = new URLSearchParams(window.location.search);
   const condominioId = params.get("condominio");
 
-  if (condominioId) {
-    document.getElementById("condominio").innerText =
-      "Condomínio identificado: " + condominioId;
-  } else {
-    document.getElementById("condominio").innerText =
-      "Condomínio não identificado";
+  if (!condominioId) {
+    alert("Condomínio não identificado");
   }
+
+  document.getElementById("condominioId").value = condominioId;
+  document.getElementById("infoCondominio").innerText =
+    "Condomínio: " + condominioId;
+
+  document.getElementById("entregaForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const dados = {
+      condominioId: condominioId,
+      apartamento: document.getElementById("apartamento").value,
+      tipo: document.getElementById("tipo").value,
+      observacoes: document.getElementById("obs").value,
+      data: new Date().toISOString()
+    };
+
+    console.log("Entrega registrada:", dados);
+    alert("Entrega registrada com sucesso (simulação)");
+  });
 </script>
 
 </body>
