@@ -17,57 +17,102 @@
   <input type="hidden" id="condominioId" name="condominioId">
 
   <label>
+    Bloco (de 1 a 4)
+      <select name="" id="bloco" size="4">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
     Apartamento / Casa
-    <input type="text" id="apartamento" required>
+    <input type="number" id="apartamento" placeholder="número do apartamento" required>
+    Nome
+    <input type="text" id="nome">
+    <label for="phone">Telefone:</label>
+    <input type="tel" id="phone" name="phone" placeholder="(XX) XXXXX-XXXX">
   </label>
 
   <label>
     Tipo de entrega
     <select id="tipo" required>
-      <option value="">Selecione</option>
+      Selecione
       <option>Correios</option>
-      <option>Mercado</option>
+      <option>Mercado livre</option>
       <option>Transportadora</option>
+      <option>shopee</option>
+      <option>amazon</option>
       <option>Outros</option>
     </select>
   </label>
 
   <label>
-    Observações
-    <textarea id="obs"></textarea>
+    Outros
+    <textarea id="outros" placeholder="outros tipos de entrega"></textarea>
   </label>
-
+  Entrega na portaria?
+   <label for="agree_yes">
+            <input type="radio" id="radio" name="agreement" value="yes">
+            Yes
+        </label>
+        
+        <label for="agree_no">
+            <input type="radio" checked id="radio" name="agreement" value="no">
+            No
+        </label>
   <button type="submit">Confirmar entrega</button>
 
 </form>
 
-  <script>
-  const params = new URLSearchParams(window.location.search);
-  const condominioId = params.get("condominio");
 
-  if (!condominioId) {
-    alert("Condomínio não identificado");
-  }
 
-  document.getElementById("condominioId").value = condominioId;
-  document.getElementById("infoCondominio").innerText =
-    "Condomínio: " + condominioId;
 
-  document.getElementById("entregaForm").addEventListener("submit", function(e) {
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDMTaSjpwQsL04JxiRZHju0wXMpJnZ4_cI",
+    authDomain: "boxia-entregas.firebaseapp.com",
+    projectId: "boxia-entregas",
+    storageBucket: "boxia-entregas.firebasestorage.app",
+    messagingSenderId: "697886386308",
+    appId: "1:697886386308:web:71562c4e11463c02ccbad1"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
+</script>
+<script>
+  document.getElementById("entregaForm").addEventListener("submit", async function(e) {
     e.preventDefault();
+
+    const params = new URLSearchParams(window.location.search);
+    const condominioId = params.get("condominio");
 
     const dados = {
       condominioId: condominioId,
+      bloco: document.getElementById("bloco").value,
       apartamento: document.getElementById("apartamento").value,
-      tipo: document.getElementById("tipo").value,
-      observacoes: document.getElementById("obs").value,
+      tipoEntrega: document.getElementById("tipo").value,
+      outros: document.getElementById("outros").value,
       data: new Date().toISOString()
     };
 
-    console.log("Entrega registrada:", dados);
-    alert("Entrega registrada com sucesso (simulação)");
+    try {
+      await db.collection("entregas").add(dados);
+      alert("Entrega registrada com sucesso!");
+      this.reset();
+    } catch (erro) {
+      console.error(erro);
+      alert("Erro ao registrar entrega");
+    }
   });
 </script>
-
 </body>
 </html>
