@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Entrega - Condomínio</title>
+  <link href="https://cdn.jsdelivr.net" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 </head>
 <body>
 
 <h1>Registro de Entrega</h1>
-
+ <div class="form-group">
 <p id="condominio"></p>
 <form id="entregaForm">
 
@@ -26,10 +27,12 @@
       </select>
     Apartamento / Casa
     <input type="number" id="apartamento" placeholder="número do apartamento" required>
-    Nome
+    Nome do entregador
     <input type="text" id="nome">
+    Nome do destinátario
+    <input type="text" name="" id="destinatario">
     <label for="phone">Telefone:</label>
-    <input type="tel" id="phone" name="phone" placeholder="(XX) XXXXX-XXXX">
+    <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX">
   </label>
 
   <label>
@@ -51,62 +54,72 @@
   </label>
   Entrega na portaria?
    <label for="agree_yes">
-            <input type="radio" id="radio" name="agreement" value="yes">
+            <input type="radio" id="radio" name="portaria" value="true">
             Yes
         </label>
         
         <label for="agree_no">
-            <input type="radio" checked id="radio" name="agreement" value="no">
+            <input type="radio" checked id="radio" name="portaria" value="">
             No
         </label>
   <button type="submit">Confirmar entrega</button>
 
 </form>
+</div>
 
 
 
-
+<script src="https://cdn.jsdelivr.net" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
 
-  // Your web app's Firebase configuration
+
+<script>
+  // 🔴 COLE AQUI a configuração que o Firebase te deu
   const firebaseConfig = {
-    apiKey: "AIzaSyDMTaSjpwQsL04JxiRZHju0wXMpJnZ4_cI",
-    authDomain: "boxia-entregas.firebaseapp.com",
-    projectId: "boxia-entregas",
-    storageBucket: "boxia-entregas.firebasestorage.app",
-    messagingSenderId: "697886386308",
-    appId: "1:697886386308:web:71562c4e11463c02ccbad1"
+  apiKey: "AIzaSyDMTaSjpwQsL04JxiRZHju0wXMpJnZ4_cI",
+  authDomain: "boxia-entregas.firebaseapp.com",
+  projectId: "boxia-entregas",
+  storageBucket: "boxia-entregas.firebasestorage.app",
+  messagingSenderId: "697886386308",
+  appId: "1:697886386308:web:71562c4e11463c02ccbad1"
   };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-</script>
-<script>
   document.getElementById("entregaForm").addEventListener("submit", async function(e) {
     e.preventDefault();
-
+    var selected = Boolean(document.querySelector('input[name="portaria"]:checked'));
     const params = new URLSearchParams(window.location.search);
     const condominioId = params.get("condominio");
-
+    const now = new Date();
+    const selectElement = document.getElementById("bloco");
+// Simple localized time (e.g., "7:22:00 PM" or "19:22:00")
+    const localizedTime = now.toLocaleTimeString(); 
+    let date = new Date().toLocaleDateString('pt-BR');
+    const telefone=parseInt(document.getElementById("telefone").value);
+    
     const dados = {
       condominioId: condominioId,
-      bloco: document.getElementById("bloco").value,
       apartamento: document.getElementById("apartamento").value,
+      bloco: selectElement.value,
       tipoEntrega: document.getElementById("tipo").value,
+      portaria: selected,
+      hora: localizedTime,
+      data:date,
       outros: document.getElementById("outros").value,
-      data: new Date().toISOString()
+      nome:document.getElementById("nome").value,
+      destinatario: document.getElementById("destinatario").value,
+      telefone: telefone
+      
     };
-
     try {
-      await db.collection("entregas").add(dados);
+      const docRef = await db.collection("entregas").add(dados)
+      const protocolo = docRef.id
       alert("Entrega registrada com sucesso!");
+      
+
       this.reset();
     } catch (erro) {
       console.error(erro);
